@@ -17,20 +17,17 @@ class SegmentationAnalyzer:
     def _pixel_to_micron2(self, pixel_area):
         return pixel_area * (self.micron_per_pixel ** 2)
 
-    def analyze(self):
-        results = {}
+    def analyze(self, target_labels=("Etioplast", "PLBs")):
+        results = {label: {"area_um2": 0.0, "count": 0} for label in target_labels}
 
         for seg, cls_idx in zip(self.masks, self.classes):
             label = self.class_names[cls_idx]
-            polygon = np.array(seg, dtype=np.float32)
-            area_px = self._polygon_area(polygon)
-            area_um2 = self._pixel_to_micron2(area_px)
-
-            if label not in results:
-                results[label] = {"area_um2": 0.0, "count": 0}
-
-            results[label]["area_um2"] += area_um2
-            results[label]["count"] += 1
+            if label in results:
+                polygon = np.array(seg, dtype=np.float32)
+                area_px = self._polygon_area(polygon)
+                area_um2 = self._pixel_to_micron2(area_px)
+                results[label]["area_um2"] += area_um2
+                results[label]["count"] += 1
 
         for label in results:
             results[label]["area_um2"] = round(results[label]["area_um2"], 2)
