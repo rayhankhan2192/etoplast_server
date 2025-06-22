@@ -16,3 +16,4 @@ requests
 mysqlclient
 pillow
 python-decouple
+python-dotenv
