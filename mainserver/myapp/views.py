@@ -71,21 +71,27 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.files.storage import default_storage
 from django.conf import settings
 from ultralytics import YOLO
-from ...mainserver.myapp.segmentation import SegmentationAnalyzer
 import os
 import cv2
 import numpy as np
 import uuid
+from .segmentation import SegmentationAnalyzer
+
+from dotenv import load_dotenv
+
+
+load_dotenv()
+model_path = os.getenv("MODEL_PATH")
+
 
 class YOLOSegmentAnalyzeView(APIView):
+    model = YOLO(model_path)
     parser_classes = (MultiPartParser, FormParser)
-
-    model = YOLO(r"E:\Python\Machile Learning\Research\Ethioplast\Etio_Desi_Project\Code\bestv3.pt")
-    class_names = ["Etioplast", "PLBs", "Class_2", "Prothylakoids"]
+    class_names = ['Etioplast', 'PLB', 'Plastoglobule', 'Prothylakoid']
     colors = [
         (255, 0, 0),     # Etioplast
         (0, 255, 0),     # PLBs
-        (0, 0, 255),     # Class_2
+        (0, 0, 255),     # Plastoglobule
         (0, 255, 255),   # Prothylakoids
     ]
 
